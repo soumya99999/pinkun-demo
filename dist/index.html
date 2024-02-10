@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign-In</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore.js"></script>
+    <script type="module" src="/firebase/database.js"></script>
+    <style>
+        body {
+            background-image: radial-gradient(circle, rgba(221, 0, 255, 1) 0%, rgba(68, 9, 121, 1) 0%, rgba(0, 0, 5, 1) 100%);
+            padding: 0;
+            margin: 0;
+            position: relative;
+        }
+
+        .search {
+            background-color: rgb(216, 214, 227);
+            float: right;
+            margin: 13px 6px;
+            padding: 12px 85px;
+            color: white;
+        }
+
+        .search input {
+            padding: 4px;
+            border: 4px solid #888;
+            border-radius: 18px;
+            box-sizing: border-box;
+            width: 331px;
+            margin-left: 38px;
+            margin-right: -33px;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            border: 4px solid rgb(231 103 103);
+            height: 407px;
+            width: 371px;
+            margin-left: 455px;
+            margin-top: 44px;
+            border-radius: 22px;
+            background-color: #c1c1c1;
+            box-shadow: 20px 20px 60px black, inset -20px -20px 60px rgb(86, 84, 84);
+            padding: -64px;
+            position: absolute;
+            opacity: 55%;
+            z-index: 2;
+        }
+
+        #infoForm {
+            display: flex;
+            margin-left: -76px;
+            margin-top: -57px;
+            flex-direction: column;
+            gap: 7px;
+            left: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin-left: 44px;
+        }
+
+        input {
+            padding: 4px;
+            border: 1px solid #888;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 305px;
+            margin-left: 38px;
+            margin-right: -33px;
+            box-shadow: 20px 20px 60px #2a2424;
+        }
+
+        button {
+            background-color: #181877;
+            color: white;
+            cursor: pointer;
+            margin-left: 44px;
+            margin-right: -33px;
+            font-family: 'Nunito', sans-serif;
+            width: 140px;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #6e70f1;
+        }
+
+        p {
+            margin-left: 135px;
+            color: darkblue;
+            margin-top: 6px;
+            text-decoration: double;
+            cursor: pointer;
+        }
+
+        h6 {
+            text-align: center;
+            margin-left: 85px;
+            margin-bottom: 0px;
+            font-size: larger;
+            color: rgb(105 16 16);
+        }
+
+        .container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.09;
+            z-index: 1;
+        }
+
+        .forgot-pass:hover {
+            color: rgb(83, 74, 140);
+        }
+
+        .socialmedia {
+            display: block;
+            padding: 8px 67px;
+            margin-top: -11px;
+            margin-bottom: -37px;
+            margin-left: 23px;
+            margin-right: -144px;
+        }
+
+        .socialmedia ul {
+            list-style: none;
+        }
+
+        .socialmedia img {
+            display: block;
+            float: left;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            margin-right: 79px;
+            margin-top: -22px;
+            opacity: 1;
+            margin-left: -47px;
+            margin-bottom: 34px;
+            cursor: pointer;
+        }
+
+        .search[placeholder="Search......"] {
+            margin: -18px -15px;
+            padding: 9px 16px;
+        }
+
+        .sticky {
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+
+        .navbar {
+            position: sticky;
+            background-color: #40408d;
+            /* opacity: 0.4; */
+            padding: 22px 0;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar ul {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-decoration: none;
+        }
+
+
+
+        .navbar ul li {
+            color: white;
+            text-decoration: none;
+            list-style-type: none;
+        }
+
+
+        .navbar ul li a {
+            color: white !important;
+            text-decoration: none;
+        }
+
+        .navbar li a:hover {
+            padding: 3px 3px;
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+        }
+
+        .logo {
+            height: 58px;
+            width: 88px;
+            padding: -4px;
+            border-style: hidden;
+            opacity: 1;
+            border-radius: 10px;
+        }
+
+        #inform.success input {
+            border-color: green;
+        }
+
+        #inform.error input {
+            border-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sign-In">
+        <div class="back">
+            <header>
+                <nav class="navbar">
+                    <ul>
+                        <li><img src="c:\Users\soumy\Downloads\Screenshot 2024-01-06 171859.png" alt="logo"
+                                class="logo">
+                        </li>
+                        <li><a href="Home">Home</a></li>
+                        <li><a href="Courses">Courses</a></li>
+                        <li><a href="About Us">About Us</a></li>
+                        <li><a href="Programs">Programs</a></li>
+                        <li><a href="Contant Us">Contant Us</a></li>
+                        <div>
+                            <input type="text" class="search" id="search-navbar" placeholder="Search......">
+                        </div>
+                    </ul>
+                </nav>
+            </header>
+        </div>
+        <div class="container">
+            <img src="people-coffee-meeting-team-7096-scaled-1024x683_animation.gif" alt="oops can't find">
+            <div class="box">
+                <form id="infoForm">
+                    <h6>Log In</h6>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Username" required>
+                    <div class="error"></div>
+                    <label for="gmail">Gmail ID:</label>
+                    <input type="email" id="gmail" name="gmail" placeholder="Email" required>
+                    <div class="error"></div>
+                    <label for="phone">PassWord:</label>
+                    <input type="password" id="password" name="password" placeholder="password" required>
+                    <div class="error"></div>
+                    <div class="btn-feild">
+                        <button id="submitButton" class="submit" type="button"> Sign Up</button>
+                        <!-- <button class="submit" type="button"> Sign In</button> -->
+                    </div>
+                    <p class="forgot-pass">Forgot Password ?</p>
+                    <div class="socialmedia">
+                        <ul>
+                            <li><a href="https://facebook.com" target="_blank"><img src="facebook.png" alt=""></a></li>
+                            <li><a href="https://www.linkedin.com" target="_blank"><img src="linkedin.png" alt=""></a></li>
+                            <li><a href="https://www.google.com" target="_blank"><img src="google.png" alt=""></a></li>
+                            <li><a href="https://www.instagram.com" target="_blank"><img src="instagram.png" alt=""></a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- <script>
+            document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('infoForm');
+        const username = document.getElementById('name');
+        const email = document.getElementById('gmail');
+        const password = document.getElementById('password');
+    
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            validateInputs();
+        });
+    
+        const setError = function (element, message) {
+            const inputControl = element.parentElement;
+            const errorDisplay = inputControl.querySelector('.error');
+    
+            errorDisplay.innerText = message;
+            inputControl.classList.add('error');
+        };
+    
+        const setSuccess = function (element) {
+            const inputControl = element.parentElement;
+            inputControl.classList.remove('error');
+        };
+    
+        const isValidEmail = function (email) {
+            const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            return re.test(String(email).toLowerCase());
+        };
+    
+        const validateInputs = function () {
+            const usernameValue = username.value.trim();
+            const emailValue = email.value.trim();
+            const passwordValue = password.value.trim();
+    
+            if (usernameValue === '') {
+                setError(username, 'Username is required');
+            } else {
+                setSuccess(username);
+            }
+    
+            if (emailValue === '') {
+                setError(email, 'Email is Required');
+            } else if (!isValidEmail(emailValue)) {
+                setError(email, 'Provide a valid email address');
+            } else {
+                setSuccess(email);
+            }
+    
+            if (passwordValue === '') {
+                setError(password, 'Password is required');
+            } else if (passwordValue.length < 8) {
+                setError(password, 'Password must be at least 8 characters');
+            } else {
+                setSuccess(password);
+            }
+        };
+    });
+-->
+<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+<script type="module" src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
+
+<script type="module">
+    // // Import the functions you need from the SDKs you need
+    // import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    // import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    // // TODO: Add SDKs for Firebase products that you want to use
+    // // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdRdFKAZ9zosNn_z5ufaphS3z5hm5478g",
+      authDomain: "new-project-13458.firebaseapp.com",
+      databaseURL: "https://new-project-13458-default-rtdb.firebaseio.com",
+      projectId: "new-project-13458",
+      storageBucket: "new-project-13458.appspot.com",
+      messagingSenderId: "877739511546",
+      appId: "1:877739511546:web:28a8fe9d800f6793c00343",
+      measurementId: "G-8H8XY45L61"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    import { getDatabase, ref, child, get, set, update, remove } from "/firebase/database.js";
+        const db = getDatabase();
+        let username =  document.getElementById('username');
+        let gmailId =  document.getElementById('gmail');
+        let password = document.getElementById('password');
+        let submitButton = document.querySelector('#submit');
+
+        //ADD DATA
+        function AddData()
+        {
+            set(ref(db,'Sign-In/'+password.value),{
+                nameOfUser:username.value,
+                email:gmailId.value,
+                Password:password.value
+            }).then(()=>{
+                alert("Account Created Successfully");
+            }).catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+         //get data
+         function GetData(){
+            const dbRef = ref(db);
+            get(child(dbRef,'Sign-In/'+password.value)).then((snapshot) => {
+                if(snapshot.exists()){
+                    username.value = snapshot.val().username;
+                    gmailId.value= snapshot.val().email;
+                }
+                else{
+                    alert("No Data Found!");
+                }
+            })
+         }
+
+         function UpdateData()
+        {
+            update(ref(db,'Sign-In/'+password.value),{
+                nameOfUser:username.value,
+                email:gmailId.value,
+                Password:password.value
+            }).then(()=>{
+                alert("Data updated Successfully");
+            }).catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+        function DeleteData()
+        {
+            remove(ref(db,'Sign-In/'+password.value)).then(()=>{
+                alert("Data Deleted Successfully");
+            }).catch((error)=>{
+                alert("Unsuccessful");
+                console.log(error);
+            })
+        }
+
+        AddBtn.addEventListener('click',AddData);
+        AddBtn.addEventListener('click',GetData);
+        AddBtn.addEventListener('click',UpdateData);
+        AddBtn.addEventListener('click',DeleteData);
+
+
+  </script>
+  
+</body>
+
+</html>
