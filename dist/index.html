@@ -388,7 +388,7 @@
         }
 
          //get data
-         function GetData(){
+        function GetData(){
             const dbRef = ref(db);
             get(child(dbRef,'Sign-In/'+password.value)).then((snapshot) => {
                 if(snapshot.exists()){
@@ -399,9 +399,9 @@
                     alert("No Data Found!");
                 }
             })
-         }
+        }
 
-         function UpdateData()
+        function UpdateData()
         {
             update(ref(db,'Sign-In/'+password.value),{
                 nameOfUser:username.value,
@@ -431,8 +431,7 @@
         AddBtn.addEventListener('click',DeleteData);
 
 
-  </script>
-  
+</script>
 </body>
 
 </html>
